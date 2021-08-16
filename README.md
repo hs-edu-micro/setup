@@ -18,3 +18,8 @@ $ bash ./bash/clone.sh
 ```bash
 $ bash ./bash/communal.sh
 ```
+
+## 三、Release
+```bash
+$ bash ./bash/build.sh
+```

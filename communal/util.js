@@ -1,3 +1,12 @@
+/**
+ * 是否是网络地址
+ * @param {string} path
+ * @returns {Boolean}
+ */
+export function isExternal(path) {
+  return /^(https?:|mailto:|tel:)/.test(path);
+}
+
 // 下划线转换驼峰
 export const underlineToHump = function (name) {
   return name.replace(/_(\w)/g, function (all, letter) {

@@ -4,9 +4,9 @@
 
 ```js
 // require-context
-import requireAll from "@/utils/communal/svg-require.js";
+export { default as requireAll } from "@/utils/communal/svg-require.js";
 // browser screen
-import client from "@/utils/communal/client.js";
+export { default as client } from "@/utils/communal/client.js";
 
 // fil-type
 export {
@@ -49,6 +49,7 @@ export {
 } from "@/utils/communal/ua-parser.js";
 // util
 export {
+  isExternal,
   underlineToHump,
   humpToUnderline,
   getType,
@@ -67,10 +68,4 @@ export {
   getCurrentStudentDocInfo,
   blacklistReplace,
 } from "@/utils/communal/domain.js";
-
-export {
-  // 从基座中导入的公共方法
-  requireAll,
-  client,
-};
 ```

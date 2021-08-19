@@ -2,7 +2,7 @@ import { local, session } from "./store.js";
 import { humpToUnderline } from "./util.js";
 
 /* 自考测试-武汉工程大学 */
-export const businessDomain = "zktest.huashenxt.com:8888";
+export const businessDomain = process.env.VUE_APP_DOMAIN;
 
 /**
  * @title 五合一接口处理数据函数：enumList 数组转成对象格式
@@ -73,7 +73,59 @@ export function dealSolution(solutionList) {
 /**
  * @title 根据二级域名 获取覆盖axios配置信息
  */
-export const getAxiosConfig = function () {};
+export const getAxiosConfig = function () {
+  const solution = getSolutionForDomain();
+  const config = {
+    headers: {},
+  };
+  if (!solution) return config;
+  if (Object.prototype.hasOwnProperty.call(solution, "apiServerDomain")) {
+    config.baseURL = solution.apiServerDomain;
+  }
+  if (Object.prototype.hasOwnProperty.call(solution, "solutionno")) {
+    config.headers["SolutionNo"] = JSON.stringify(solution.solutionno);
+  }
+
+  const sessionUser = session.get("sessionUser");
+  if (sessionUser && Object.prototype.hasOwnProperty.call(sessionUser, "accessToken")) {
+    config.headers["AccessToken"] = sessionUser.accessToken;
+  } else {
+    const redisUser = session.get("redisUser");
+    if (redisUser) {
+      const {
+        reports,
+        // solutions,
+      } = redisUser;
+
+      /**
+       * 1. 取首位即可
+       */
+      // config.headers['AccessToken'] = reports[0].accessToken;
+
+      /**
+       * 2. solutionno相等
+       */
+      // const aSolution = solutions.filter((item) => item.solutionno == solution.solutionno);
+      // if (aSolution.length > 0) {
+      //   const aReport = reports.filter((value) => value.userno == aSolution[0].userno);
+      //   if (aReport.length > 0) {
+      //     config.headers['AccessToken'] = aReport[0].accessToken;
+      //   }
+      // }
+
+      /**
+       * 3. reports中apiDomain 与 当前业务的apiServerDomain 相等(可能有无`/`)
+       */
+      for (let i = 0; i < reports.length; i++) {
+        if (solution.apiServerDomain.indexOf(reports[i].apiDomain) > -1) {
+          config.headers["AccessToken"] = reports[i].accessToken;
+          break;
+        }
+      }
+    }
+  }
+  return config;
+};
 
 /**
  * @title 根据二级域名 获取solution
